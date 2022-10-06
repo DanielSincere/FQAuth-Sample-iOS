@@ -9,12 +9,18 @@ schemes:
     test:
       targets:
         - AppTests
+packages:
+  KeychainAccess:
+    url: https://github.com/kishikawakatsumi/KeychainAccess
+    from: 4.2.2
 targets:
   App:
     type: application
     platform: iOS
     deploymentTarget: "16.0"
     sources: [App]
+    dependencies:
+      - package: KeychainAccess
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${FQAUTH_BUNDLE_ID}

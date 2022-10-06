@@ -1,9 +1,18 @@
 import Foundation
 import AuthenticationServices
+import KeychainAccess
 
 final class LoginController: ObservableObject {
 
   @Published var currentUser: User?
+
+  init() {
+    self.currentUser = Keychain().currentUser
+  }
+
+  init(currentUser: User?) {
+    self.currentUser = currentUser
+  }
 
   func signOut() {
     
@@ -17,5 +26,3 @@ final class LoginController: ObservableObject {
     
   }
 }
-
-
