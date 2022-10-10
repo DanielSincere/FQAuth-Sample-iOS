@@ -3,11 +3,16 @@ import AuthenticationServices
 
 public struct LoginView: View {
 
-  @EnvironmentObject
-  var loginController: LoginController
+  @EnvironmentObject var loginController: LoginController
+
+  @State var error: ErrorAtInstant?
+
+  struct ErrorAtInstant: Identifiable {
+    let error: Error
+    let id: Date
+  }
 
   public var body: some View {
-
     if let user = loginController.currentUser {
       VStack {
         Text("Signed in as \(user.name)!")
@@ -16,14 +21,28 @@ public struct LoginView: View {
         }
       }
     } else {
+      VStack {
+        if let error = error {
+          Text("Error")
+          Text(error.error.localizedDescription)
+        }
 
-      SignInWithAppleButton { req in
-        loginController.onSignIn(request: req)
-      } onCompletion: { (result: Result<ASAuthorization, Error>) in
-        loginController.onSignIn(result: result)
+        SignInWithAppleButton { req in
+          loginController.onSignIn(request: req)
+        } onCompletion: { (result: Result<ASAuthorization, Error>) in
+          Task {
+            do {
+              try await loginController.onSignIn(result: result)
+            } catch {
+              await MainActor.run {
+                self.error = ErrorAtInstant(error: error, id: Date())
+              }
+            }
+          }
+        }
+        .frame(height: 50)
+        .padding()
       }
-      .frame(height: 50)
-      .padding()
     }
   }
 }
