@@ -4,3 +4,4 @@ xcuserdata
 *.xcodeproj
 *.xcworkspace
 Info.plist
+.env

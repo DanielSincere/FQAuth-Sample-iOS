@@ -19,7 +19,7 @@ Install [Mint](https://github.com/yonaskolb/Mint) and use [Swish](https://github
 - `FQAUTH_IOS_BUNDLE_ID` The bundle ID to use for the app.
 
   ```
-  security add-generic-password -a $(whoami) -s FQAUTH_IOS_BUNDLE_ID -w com.example.Haptics
+  security add-generic-password -a $(whoami) -s FQAUTH_IOS_BUNDLE_ID -w com.example.FQAuth-iOS
   ```
 
 - `FQAUTH_IOS_DEVELOPMENT_TEAM` The development team to use

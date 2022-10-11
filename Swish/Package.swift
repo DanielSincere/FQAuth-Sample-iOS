@@ -7,13 +7,14 @@ let package = Package(
   platforms: [.macOS(.v11)],
   dependencies: [
     .package(url: "https://github.com/FullQueueDeveloper/Sh.git", from: "1.0.0"),
+    .package(url: "https://github.com/swiftpackages/DotEnv.git", from: "3.0.0"),
   ],
   targets: [
     .executableTarget(
       name: "project",
       dependencies: [
         .product(name: "Sh", package: "Sh"),
-
+        "DotEnv"
       ]
     ),
   ]
