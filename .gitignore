@@ -4,4 +4,6 @@ xcuserdata
 *.xcodeproj
 *.xcworkspace
 Info.plist
+
 .env
+App/authServerURL.swift

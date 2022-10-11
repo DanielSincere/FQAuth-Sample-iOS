@@ -16,6 +16,8 @@ Install [Mint](https://github.com/yonaskolb/Mint) and use [Swish](https://github
 3. `swish project`
 
 
+The project is configured with the Bundle ID, Apple Development Team, and Server URL that you specify. These items can be specified in the shell environment, in a `.env` file, or using the `security` command line tool. The config first checks the environment, and then the `.env` file, and lastly, checks the `security` tool. Please see `.env.sample` for an example `.env` you can use. Instructions for using `security` are below.
+
 - `FQAUTH_IOS_BUNDLE_ID` The bundle ID to use for the app.
 
   ```
@@ -28,14 +30,8 @@ Install [Mint](https://github.com/yonaskolb/Mint) and use [Swish](https://github
   security add-generic-password -a $(whoami) -s FQAUTH_IOS_DEVELOPMENT_TEAM -w ASDF1234
   ```
 
-- `FQAUTH_IOS_API_KEY_ID` When deploying to the App Store, the API Key file to use
+- `FQAUTH_SERVER_URL` The server URL to use
 
   ```
-  security add-generic-password -a $(whoami) -s FQAUTH_IOS_API_KEY_ID -w ARSTARST
-  ```
-
-- `FQAUTH_IOS_API_ISSUER_ID` When deploying to the App Store, the API Issuer to use.
-
-  ```
-  security add-generic-password -a $(whoami) -s FQAUTH_IOS_API_ISSUER_ID -w 10123456987
+  security add-generic-password -a $(whoami) -s FQAUTH_SERVER_URL -w auth.example.com
   ```

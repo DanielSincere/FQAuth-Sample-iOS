@@ -25,12 +25,10 @@ struct Config {
   }
 
   private static func env(_ key: String) -> String? {
-    print("loading \(key) from env")
-    return ProcessInfo.processInfo.environment[key]
+    ProcessInfo.processInfo.environment[key]
   }
 
   private static func loadFromEnv() -> Self? {
-    print("Loading from env")
     let bundleID = env("FQAUTH_BUNDLE_ID")
     let developmentTeam = env("FQAUTH_DEVELOPMENT_TEAM")
     let serverURL = env("FQAUTH_SERVER_URL")
@@ -45,7 +43,7 @@ struct Config {
   }
 
   private static func loadDotEnv() -> Self? {
-    print("Loading from dot env")
+
     do {
       try DotEnv.load(path: ".env")
     } catch {
@@ -57,6 +55,20 @@ struct Config {
   }
 
   static func loadFromSecurity() -> Self? {
-    nil
+    do {
+      let bundleID = try security("FQAUTH_IOS_BUNDLE_ID")
+      let developmentTeam = try security("FQAUTH_DEVELOPMENT_TEAM")
+      let serverURL = try security("FQAUTH_SERVER_URL")
+
+      return Config(bundleID: bundleID,
+                    developmentTeam: developmentTeam,
+                    serverURL: serverURL)
+    } catch {
+      return nil
+    }
+  }
+
+  static func security(_ key: String) throws -> String {
+    try sh(String.self, "security find-generic-password -a $(whoami) -s \(key) -w")
   }
 }

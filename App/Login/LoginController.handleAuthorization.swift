@@ -32,7 +32,6 @@ extension LoginController {
           throw OnSignInErrors.appleAuthorizationCodeCantDeserialize
         }
 
-
         guard let email = appleIdCredential.email else {
           throw OnSignInErrors.emailMissing
         }
@@ -44,8 +43,8 @@ extension LoginController {
           authorizationCode: appleAuthorizationCodeString
         )
 
-      let baseURL = "https://example.com"
-      let url = URL(string: "\(baseURL)/api/auth/siwa")!
+
+      let url = URL(string: "\(authServerURL)/api/auth/siwa")!
       var request = URLRequest(url: url)
       request.httpMethod = "POST"
       request.setValue("application/json", forHTTPHeaderField: "Content-Type")
