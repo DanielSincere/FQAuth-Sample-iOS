@@ -2,7 +2,10 @@ import Foundation
 
 struct User: Codable, Identifiable {
   let id: UUID
-  let name: String
-  let accessToken: String
-  let refreshToken: String
+  let firstName: String
+  let lastName: String
+  
+  var fullName: String {
+    "\(firstName) \(lastName)".trimmingCharacters(in: .whitespacesAndNewlines)
+  }
 }

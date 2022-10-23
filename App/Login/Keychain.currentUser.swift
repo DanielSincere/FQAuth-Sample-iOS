@@ -3,25 +3,25 @@ import KeychainAccess
 
 extension Keychain {
 
-  private static let keychainKey = "com.fullqueuedeveloper.fqauth-sample-ios.current-user"
+  private static let currentAuthorizationKey = "com.fullqueuedeveloper.keychain.current-authorization"
 
-  var currentUser: User? {
+  var currentAuthorization: CurrentAuthorization? {
     get {
-      guard let data = self[data: Self.keychainKey] else {
+      guard let data = self[data: Self.currentAuthorizationKey] else {
         return nil
       }
 
       do {
-        return try JSONDecoder().decode(User.self, from: data)
+        return try JSONDecoder().decode(CurrentAuthorization.self, from: data)
       } catch {
-        print("error decoding user from keychain", error)
+        print("error decoding Current Authorization from keychain", error)
         return nil
       }
     }
     set {
       do {
         let newData = try JSONEncoder().encode(newValue)
-        self[data: Self.keychainKey] = newData
+        self[data: Self.currentAuthorizationKey] = newData
       } catch {
         print("error encoding user for keychain", error)
       }

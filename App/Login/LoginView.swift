@@ -13,9 +13,9 @@ public struct LoginView: View {
   }
 
   public var body: some View {
-    if let user = loginController.currentUser {
+    if let currentAuthorization = loginController.currentAuthorization {
       VStack {
-        Text("Signed in as \(user.name)!")
+        Text("Signed in as \(currentAuthorization.user.fullName)!")
         Button("Sign out") {
           loginController.signOut()
         }
@@ -47,14 +47,19 @@ public struct LoginView: View {
   }
 }
 
+#if DEBUG
 struct LoginView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       LoginView()
-        .environmentObject(LoginController(currentUser: nil))
+        .environmentObject(LoginController(currentAuthorization: nil))
 
       LoginView()
-        .environmentObject(LoginController(currentUser: User(id: .init(), name: "Person Sample", accessToken: "my-access-token", refreshToken: "my-refresh-token")))
+        .environmentObject(LoginController(currentAuthorization:
+                                            CurrentAuthorization(user: User(id: .init(), firstName: "Person", lastName: "Sample"),
+                                                                 refreshToken: "my-refresh-token",
+                                                                 accessToken: "my-access-token")))
     }
   }
 }
+#endif

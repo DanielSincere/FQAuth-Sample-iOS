@@ -4,15 +4,15 @@ import KeychainAccess
 
 final class LoginController: ObservableObject {
 
-  @Published var currentUser: User?
+  @Published var currentAuthorization: CurrentAuthorization?
 
-  init(currentUser: User? = Keychain().currentUser) {
-    self.currentUser = currentUser
+  init(currentAuthorization: CurrentAuthorization? = Keychain().currentAuthorization) {
+    self.currentAuthorization = currentAuthorization
   }
 
   func signOut() {
-    Keychain().currentUser = nil
-    self.currentUser = nil
+    Keychain().currentAuthorization = nil
+    self.currentAuthorization = nil
   }
 
   func onSignIn(request: ASAuthorizationAppleIDRequest) {
@@ -22,10 +22,8 @@ final class LoginController: ObservableObject {
   func onSignIn(result: Result<ASAuthorization, Error>) async throws {
     let user = try await self.handleAuthorization(result: result)
     await MainActor.run {
-      self.currentUser = user
-      Keychain().currentUser = user
+      self.currentAuthorization = user
+      Keychain().currentAuthorization = user
     }
   }
-
-
 }
