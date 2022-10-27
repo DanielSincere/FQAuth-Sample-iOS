@@ -32,9 +32,6 @@ extension LoginController {
         throw OnSignInErrors.appleAuthorizationCodeCantDeserialize
       }
       
-      guard let email = appleIdCredential.email else {
-        throw OnSignInErrors.emailMissing
-      }
       
       guard let firstName = appleIdCredential.fullName?.givenName else {
         throw OnSignInErrors.firstNameMissing
@@ -45,7 +42,7 @@ extension LoginController {
       }
       
       let body = SIWAAuthRequestBody(
-        email: email,//appleIdCredential.email ?? "no email",
+        email: appleIdCredential.email,
         firstName: firstName,
         lastName: lastName,
         deviceName: await UIDevice.current.name,
@@ -53,8 +50,7 @@ extension LoginController {
         authorizationCode: appleAuthorizationCodeString
       )
       
-      
-      let url = URL(string: "\(authServerURL)api/siwa/authorize")!
+      let url = URL(string: "/api/siwa/authorize", relativeTo: authServerURL)!.absoluteURL
       var request = URLRequest(url: url)
       request.httpMethod = "POST"
       request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -77,7 +73,7 @@ extension LoginController {
   }
   
   struct SIWAAuthRequestBody: Encodable {
-    let email: String
+    let email: String?
     let firstName: String
     let lastName: String
     let deviceName: String
