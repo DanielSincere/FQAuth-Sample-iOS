@@ -2,10 +2,14 @@ import Foundation
 
 struct User: Codable, Identifiable {
   let id: UUID
-  let firstName: String
-  let lastName: String
+  let firstName: String?
+  let lastName: String?
   
   var fullName: String {
-    "\(firstName) \(lastName)".trimmingCharacters(in: .whitespacesAndNewlines)
+    if let firstName, let lastName {
+      return "\(firstName) \(lastName)".trimmingCharacters(in: .whitespacesAndNewlines)
+    } else {
+      return "unnamed"
+    }
   }
 }

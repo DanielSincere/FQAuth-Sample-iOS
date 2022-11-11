@@ -17,6 +17,7 @@ final class LoginController: ObservableObject {
 
   func onSignIn(request: ASAuthorizationAppleIDRequest) {
     request.requestedScopes = [.fullName, .email]
+
   }
 
   func onSignIn(result: Result<ASAuthorization, Error>) async throws {

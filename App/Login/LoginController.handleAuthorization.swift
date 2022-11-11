@@ -31,20 +31,11 @@ extension LoginController {
       guard let appleAuthorizationCodeString = String(data: appleAuthorizationCode, encoding: .utf8) else {
         throw OnSignInErrors.appleAuthorizationCodeCantDeserialize
       }
-      
-      
-      guard let firstName = appleIdCredential.fullName?.givenName else {
-        throw OnSignInErrors.firstNameMissing
-      }
-      
-      guard let lastName = appleIdCredential.fullName?.familyName else {
-        throw OnSignInErrors.lastNameMissing
-      }
-      
+                  
       let body = SIWAAuthRequestBody(
         email: appleIdCredential.email,
-        firstName: firstName,
-        lastName: lastName,
+        firstName: appleIdCredential.fullName?.givenName,
+        lastName: appleIdCredential.fullName?.familyName,
         deviceName: await UIDevice.current.name,
         appleIdentityToken: idTokenString,
         authorizationCode: appleAuthorizationCodeString
@@ -69,13 +60,13 @@ extension LoginController {
   struct VaporError: Decodable, Error, LocalizedError {
     let reason: String
     
-    var errorDescription: String? { reason }
+    var errorDescription: String? { "Server error: " + reason }
   }
   
   struct SIWAAuthRequestBody: Encodable {
     let email: String?
-    let firstName: String
-    let lastName: String
+    let firstName: String?
+    let lastName: String?
     let deviceName: String
     let appleIdentityToken: String
     let authorizationCode: String
