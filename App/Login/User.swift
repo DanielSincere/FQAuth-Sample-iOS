@@ -13,3 +13,4 @@ struct User: Codable, Identifiable {
     }
   }
 }
+

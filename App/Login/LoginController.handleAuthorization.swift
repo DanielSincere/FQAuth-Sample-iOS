@@ -3,15 +3,12 @@ import AuthenticationServices
 
 extension LoginController {
   
-  func handleAuthorization(result: Result<ASAuthorization, Error>) async throws -> CurrentAuthorization {
+  func handleAuthorization(result: Result<ASAuthorization, Error>, currentLoginAttempt: LoginAttempt) async throws -> CurrentAuthorization {
     switch result {
     case .failure(let failure):
       throw failure
     case .success(let authorization):
-      guard let appleIdProvider = authorization.provider as? ASAuthorizationAppleIDProvider else {
-        throw OnSignInErrors.nonAppleProvider
-      }
-      
+            
       guard let appleIdCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
         throw OnSignInErrors.nonAppleCredential
       }
@@ -30,6 +27,10 @@ extension LoginController {
       
       guard let appleAuthorizationCodeString = String(data: appleAuthorizationCode, encoding: .utf8) else {
         throw OnSignInErrors.appleAuthorizationCodeCantDeserialize
+      }
+      
+      guard appleIdCredential.state == currentLoginAttempt.state else {
+        throw OnSignInErrors.generatedStateDoenstMatchReceivedState
       }
                   
       let body = SIWAAuthRequestBody(
@@ -74,7 +75,6 @@ extension LoginController {
   
 
   enum OnSignInErrors: Error, LocalizedError {
-    case nonAppleProvider
     case nonAppleCredential
     case identityTokenMissing
     case identityTokenCantDeserialize
@@ -84,11 +84,12 @@ extension LoginController {
     case firstNameMissing
     case lastNameMissing
     
+    case receivedSignInCallbackWithoutCurrentLoginAttempt
+    case generatedStateDoenstMatchReceivedState
+    
     var errorDescription: String? {
       switch self {
-        
-      case .nonAppleProvider:
-        return "non apple provider"
+
       case .nonAppleCredential:
         return "non-Apple credential"
       case .identityTokenMissing:
@@ -105,6 +106,11 @@ extension LoginController {
         return "First name missing"
       case .lastNameMissing:
         return "Last name missing"
+        
+      case .receivedSignInCallbackWithoutCurrentLoginAttempt:
+        return "Internal state error, try again"
+      case .generatedStateDoenstMatchReceivedState:
+        return "3rd-party tampering detected"
       }
     }
   }
