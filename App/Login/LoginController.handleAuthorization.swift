@@ -8,7 +8,7 @@ extension LoginController {
     case .failure(let failure):
       throw failure
     case .success(let authorization):
-            
+
       guard let appleIdCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
         throw OnSignInErrors.nonAppleCredential
       }
@@ -32,7 +32,7 @@ extension LoginController {
       guard appleIdCredential.state == currentLoginAttempt.state else {
         throw OnSignInErrors.generatedStateDoenstMatchReceivedState
       }
-                  
+
       let body = SIWAAuthRequestBody(
         email: appleIdCredential.email,
         firstName: appleIdCredential.fullName?.givenName,

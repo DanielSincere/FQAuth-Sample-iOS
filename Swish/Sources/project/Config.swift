@@ -6,7 +6,8 @@ struct Config {
 
   let bundleID: String
   let developmentTeam: String
-  let serverURL: String
+  let fqAuthServerURL: String
+  let randomStringServerURL: String
 
   static func load() throws -> Self {
     if let config = loadFromEnv() {
@@ -31,15 +32,17 @@ struct Config {
   private static func loadFromEnv() -> Self? {
     let bundleID = env("FQAUTH_BUNDLE_ID")
     let developmentTeam = env("FQAUTH_DEVELOPMENT_TEAM")
-    let serverURL = env("FQAUTH_SERVER_URL")
+    let fqAuthServerURL = env("FQAUTH_SERVER_URL")
+    let randomStringServerURL = env("RANDOM_STRING_SERVER_URL")
 
-    guard let bundleID, let developmentTeam, let serverURL else {
+    guard let bundleID, let developmentTeam, let fqAuthServerURL, let randomStringServerURL = randomStringServerURL else {
       return nil
     }
 
     return Config(bundleID: bundleID,
                   developmentTeam: developmentTeam,
-                  serverURL: serverURL)
+                  fqAuthServerURL: fqAuthServerURL,
+                  randomStringServerURL: randomStringServerURL)
   }
 
   private static func loadDotEnv() -> Self? {
@@ -58,11 +61,13 @@ struct Config {
     do {
       let bundleID = try security("FQAUTH_IOS_BUNDLE_ID")
       let developmentTeam = try security("FQAUTH_DEVELOPMENT_TEAM")
-      let serverURL = try security("FQAUTH_SERVER_URL")
+      let fqAuthServerURL = try security("FQAUTH_SERVER_URL")
+      let randomStringServerURL = try security("RANDOM_STRING_SERVER_URL")
 
       return Config(bundleID: bundleID,
                     developmentTeam: developmentTeam,
-                    serverURL: serverURL)
+                    fqAuthServerURL: fqAuthServerURL,
+                    randomStringServerURL: randomStringServerURL)
     } catch {
       return nil
     }
