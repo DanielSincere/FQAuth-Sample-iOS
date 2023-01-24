@@ -10,9 +10,14 @@ struct FQAuthApp: App {
     WindowGroup {
       VStack {
         Text("hello")
-        LoginView()
+
+        LoggedIn { currentAuthorization in
+          RandomStringView()
+        }
       }
       .environmentObject(loginController)
     }
   }
 }
+
+

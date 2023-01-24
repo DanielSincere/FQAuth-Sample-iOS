@@ -7,4 +7,5 @@ Info.plist
 
 .env
 App/authServerURL.swift
+App/randomStringServerURL.swift
 App/App.entitlements
