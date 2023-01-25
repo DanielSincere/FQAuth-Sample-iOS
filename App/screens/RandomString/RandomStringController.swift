@@ -31,8 +31,23 @@ final class RandomStringController: ObservableObject {
     }
   }
 
-  func regenerate() {
+  func regenerate() async {
 
+    do {
+      let url = URL(string: "/api/sample/new", relativeTo: randomStringServerURL)!.absoluteURL
+      let (data, response) = try await NetworkingHelper().authorizedRequest(url: url, httpMethod: "POST")
+
+      await MainActor.run {
+        if let string = String(data: data, encoding: .utf8) {
+          self.latestEvent = .init(state: .loaded(string))
+        } else {
+          self.latestEvent = .init(state: .error(Errors.responseDataNotConvertibleToString))
+        }
+      }
+
+    } catch {
+      self.latestEvent = .init(state: .error(Errors.urlSession(error)))
+    }
   }
 
   struct Event: Identifiable {

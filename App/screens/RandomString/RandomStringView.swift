@@ -19,9 +19,14 @@ struct RandomStringView: View {
           ProgressView()
         case .loaded(let current):
           Text(current)
+          HStack {
+            RefreshButton(controller: controller)
+            RegenerateButton(controller: controller)
+          }
         case .error(let error):
           Text(error.localizedDescription)
             .foregroundColor(.red)
+          RefreshButton(controller: controller)
         }
       }
       .task {
@@ -33,7 +38,33 @@ struct RandomStringView: View {
       }
     }
   }
+
+  struct RefreshButton: View {
+    @ObservedObject var controller: RandomStringController
+    var body: some View {
+      Button("refresh") {
+        Task {
+          await controller.refresh()
+        }
+      }
+      .buttonStyle(.borderedProminent)
+    }
+  }
+
+  struct RegenerateButton: View {
+    @ObservedObject var controller: RandomStringController
+    var body: some View {
+      Button("Regenerate") {
+        Task {
+          await controller.regenerate()
+        }
+      }
+      .buttonStyle(.bordered)
+    }
+  }
 }
+
+
 
 struct RandomStringView_Previews: PreviewProvider {
   static var previews: some View {
