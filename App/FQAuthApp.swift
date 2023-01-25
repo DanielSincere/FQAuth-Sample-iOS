@@ -6,18 +6,26 @@ struct FQAuthApp: App {
   @StateObject
   var loginController = LoginController()
 
+  @State
+  var currentRoute: NavigationPath = NavigationPath()
+
   var body: some Scene {
     WindowGroup {
-      VStack {
-        Text("hello")
+      LoggedIn { currentAuthorization in
+        NavigationStack(path: $currentRoute) {
 
-        LoggedIn { currentAuthorization in
-          RandomStringView()
+          RandomStringView(currentRoute: $currentRoute)
+            .navigationDestination(for: AppRoute.self) { appRoute in
+              switch appRoute {
+              case .randomString:
+                RandomStringView(currentRoute: $currentRoute)
+              case .profile:
+                ProfileScreen()
+              }
+            }
         }
       }
       .environmentObject(loginController)
     }
   }
 }
-
-

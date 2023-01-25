@@ -11,6 +11,7 @@ struct LoggedIn<Content: View>: View {
     if let currentAuthorization = loginController.currentAuthorization {
       content(currentAuthorization)
     } else {
+
       LoginView()
     }
   }

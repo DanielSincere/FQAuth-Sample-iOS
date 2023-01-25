@@ -5,10 +5,11 @@ struct RandomStringView: View {
   @ObservedObject
   var controller: RandomStringController = .init()
 
-  var body: some View {
-    VStack {
+  @Binding var currentRoute: NavigationPath
 
-      SignOutButton()
+  var body: some View {
+
+    VStack {
 
       Group {
         switch controller.latestEvent.state {
@@ -16,16 +17,21 @@ struct RandomStringView: View {
           Text("not loaded")
             .foregroundColor(.gray)
         case .loading:
+          Text("loading").foregroundColor(.gray)
           ProgressView()
         case .loaded(let current):
+          Spacer()
           Text(current)
+          Spacer()
           HStack {
             RefreshButton(controller: controller)
             RegenerateButton(controller: controller)
           }
         case .error(let error):
+          Spacer()
           Text(error.localizedDescription)
             .foregroundColor(.red)
+          Spacer()
           RefreshButton(controller: controller)
         }
       }
@@ -37,6 +43,19 @@ struct RandomStringView: View {
         await controller.refresh()
       }
     }
+    .navigationTitle("Random String app")
+    .toolbar {
+      ToolbarItem(placement: .primaryAction) {
+        Button("Profile") {
+          currentRoute.append(AppRoute.profile)
+        }
+      }
+    }
+
+  }
+
+  struct ProfileButton {
+
   }
 
   struct RefreshButton: View {
@@ -69,13 +88,21 @@ struct RandomStringView: View {
 struct RandomStringView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      RandomStringView(controller: RandomStringController(state: .notLoaded))
+      NavigationStack {
+        RandomStringView(controller: RandomStringController(state: .notLoaded), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+      }
 
-      RandomStringView(controller: RandomStringController(state: .loading))
+      NavigationStack {
+        RandomStringView(controller: RandomStringController(state: .loading), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+      }
 
-      RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString)))
+      NavigationStack {
+        RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString)), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+      }
 
-      RandomStringView(controller: RandomStringController(state: .loaded("yes it loads")))
+      NavigationStack {
+        RandomStringView(controller: RandomStringController(state: .loaded("yes it loads")), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+      }
     }
   }
 }

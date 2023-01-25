@@ -22,6 +22,10 @@ public struct LoginView: View {
       }
     } else {
       VStack {
+
+        Text("Random string login").font(.title)
+        Spacer()
+
         if let error = error {
           Text("Error")
           Text(error.error.localizedDescription)
@@ -42,6 +46,8 @@ public struct LoginView: View {
         }
         .frame(height: 50)
         .padding()
+
+        Spacer()
       }
     }
   }

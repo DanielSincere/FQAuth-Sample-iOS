@@ -35,7 +35,7 @@ final class RandomStringController: ObservableObject {
 
     do {
       let url = URL(string: "/api/sample/new", relativeTo: randomStringServerURL)!.absoluteURL
-      let (data, response) = try await NetworkingHelper().authorizedRequest(url: url, httpMethod: "POST")
+      let (data, _) = try await NetworkingHelper().authorizedRequest(url: url, httpMethod: "POST")
 
       await MainActor.run {
         if let string = String(data: data, encoding: .utf8) {
