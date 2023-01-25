@@ -2,8 +2,12 @@ import Foundation
 import KeychainAccess
 
 public struct NetworkingHelper {
+
+  let keychain: KeychainInterface
+  let urlSession: URLSessionInterface
+
   public func authorizedRequest(url: URL, httpMethod: String = "GET") async throws -> (Data, URLResponse) {
-    guard let token = Keychain().currentAuthorization?.accessToken else {
+    guard let token = keychain.currentAuthorization?.accessToken else {
       throw Errors.notLoggedIn
     }
 
@@ -11,7 +15,7 @@ public struct NetworkingHelper {
     request.httpMethod = httpMethod
     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-    return try await URLSession.shared.data(for: request)
+    return try await urlSession.data(for: request)
   }
 
   public enum Errors: Error, LocalizedError {
