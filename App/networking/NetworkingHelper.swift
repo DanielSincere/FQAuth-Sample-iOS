@@ -11,37 +11,38 @@ public struct NetworkingHelper {
       throw Errors.notLoggedIn
     }
 
-    var request = URLRequest(url: url)
-    request.httpMethod = httpMethod
-    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-    let response = try await urlSession.data(for: request)
+    let response = try await makeRequest(url: url, httpMethod: httpMethod, authToken: token)
 
-    guard (response.1 as! HTTPURLResponse).statusCode == 403 else {
+    guard (response.1).statusCode == 403 else {
       return response
     }
 
 
-    let refreshTokenRequest = URLRequest(url: URL(string: "api/token", relativeTo: authServerURL)!)
+    let refreshTokenResponse = try await makeRequest(url: URL(string: "api/token", relativeTo: authServerURL)!, httpMethod: "POST")
 
-    let refreshTokenResponse = try await urlSession.data(for: refreshTokenRequest)
 
-    if (refreshTokenResponse.1 as! HTTPURLResponse).statusCode == 200 {
+    if (refreshTokenResponse.1).statusCode == 200 {
       let newAuthorization = try JSONDecoder().decode(CurrentAuthorization.self, from: refreshTokenResponse.0)
-      var secondRequest = URLRequest(url: url)
-      secondRequest.httpMethod = httpMethod
-      print()
-      print(newAuthorization)
-      print(newAuthorization.accessToken)
-      print("-----")
-      secondRequest.setValue("Bearer \(newAuthorization.accessToken)", forHTTPHeaderField: "Authorization")
+
       // notify login controller
       // store in keychain
-      return try await urlSession.data(for: secondRequest)
+      return try await makeRequest(url: url, httpMethod: httpMethod, authToken: newAuthorization.accessToken)
+
     } else {
       let vaporError = try JSONDecoder().decode(LoginController.VaporError.self, from: refreshTokenResponse.0)
       throw vaporError
     }
+  }
+
+  private func makeRequest(url: URL, httpMethod: String, authToken: String? = nil) async throws -> (Data, HTTPURLResponse) {
+    var request = URLRequest(url: url)
+    request.httpMethod = httpMethod
+    if let authToken {
+      request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
+    }
+
+    return try await urlSession.data(for: request) as! (Data, HTTPURLResponse)
   }
 
   public enum Errors: Error, LocalizedError {
