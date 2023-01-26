@@ -15,7 +15,33 @@ public struct NetworkingHelper {
     request.httpMethod = httpMethod
     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-    return try await urlSession.data(for: request)
+    let response = try await urlSession.data(for: request)
+
+    guard (response.1 as! HTTPURLResponse).statusCode == 403 else {
+      return response
+    }
+
+
+    let refreshTokenRequest = URLRequest(url: URL(string: "api/token", relativeTo: authServerURL)!)
+
+    let refreshTokenResponse = try await urlSession.data(for: refreshTokenRequest)
+
+    if (refreshTokenResponse.1 as! HTTPURLResponse).statusCode == 200 {
+      let newAuthorization = try JSONDecoder().decode(CurrentAuthorization.self, from: refreshTokenResponse.0)
+      var secondRequest = URLRequest(url: url)
+      secondRequest.httpMethod = httpMethod
+      print()
+      print(newAuthorization)
+      print(newAuthorization.accessToken)
+      print("-----")
+      secondRequest.setValue("Bearer \(newAuthorization.accessToken)", forHTTPHeaderField: "Authorization")
+      // notify login controller
+      // store in keychain
+      return try await urlSession.data(for: secondRequest)
+    } else {
+      let vaporError = try JSONDecoder().decode(LoginController.VaporError.self, from: refreshTokenResponse.0)
+      throw vaporError
+    }
   }
 
   public enum Errors: Error, LocalizedError {
