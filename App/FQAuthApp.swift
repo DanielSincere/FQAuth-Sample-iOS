@@ -12,14 +12,6 @@ struct FQAuthApp: App {
   @State
   var currentRoute: NavigationPath = NavigationPath()
 
-  init() {
-    let keychain = Keychain()
-    let currentAuthController = CurrentAuthorizationController(keychain: keychain)
-    self.currentAuthController = currentAuthController
-    self.networking = FQNetworking(urlSession: URLSession.shared,
-                                             currentAuthController: currentAuthController)
-  }
-
   var body: some Scene {
     WindowGroup {
       LoggedIn { currentAuthorization in
@@ -39,5 +31,13 @@ struct FQAuthApp: App {
       .environmentObject(currentAuthController)
       .environmentObject(networking)
     }
+  }
+
+  init() {
+    let keychain = Keychain()
+    let currentAuthController = CurrentAuthorizationController(keychain: keychain)
+    self.currentAuthController = currentAuthController
+    self.networking = FQNetworking(urlSession: URLSession.shared,
+                                             currentAuthController: currentAuthController)
   }
 }

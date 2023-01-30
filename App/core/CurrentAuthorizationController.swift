@@ -1,8 +1,6 @@
 import Foundation
 import KeychainAccess
 
-/// Maybe only place that accesses keychain
-///
 final class CurrentAuthorizationController: ObservableObject {
 
   @Published internal private(set) var currentAuthorization: CurrentAuthorization?
@@ -20,12 +18,12 @@ final class CurrentAuthorizationController: ObservableObject {
   }
 
   func signOut() {
-    keychain.currentAuthorization = nil
+    self.keychain.currentAuthorization = nil
     self.currentAuthorization = nil
   }
 
   func login(_ currentAuthorization: CurrentAuthorization) {
     self.currentAuthorization = currentAuthorization
-    keychain.currentAuthorization = currentAuthorization
+    self.keychain.currentAuthorization = currentAuthorization
   }
 }
