@@ -3,7 +3,7 @@ import SwiftUI
 public struct SignOutButton: View {
 
   @EnvironmentObject
-  var loginController: LoginController
+  var currentAuthController: CurrentAuthorizationController
 
   public var body: some View {
     Button("Sign out", action: signOut)
@@ -11,13 +11,13 @@ public struct SignOutButton: View {
   }
 
   private func signOut() {
-    loginController.signOut()
+    currentAuthController.signOut()
   }
 }
 
 struct SignOutButton_Previews: PreviewProvider {
   static var previews: some View {
     SignOutButton()
-      .environmentObject(LoginController())
+      .environmentObject(CurrentAuthorizationController())
   }
 }

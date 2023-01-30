@@ -4,7 +4,7 @@ import SwiftUI
 struct FQAuthApp: App {
 
   @StateObject
-  var loginController = LoginController()
+  var currentAuthController = CurrentAuthorizationController()
 
   @State
   var currentRoute: NavigationPath = NavigationPath()
@@ -25,7 +25,7 @@ struct FQAuthApp: App {
             }
         }
       }
-      .environmentObject(loginController)
+      .environmentObject(currentAuthController)
     }
   }
 }

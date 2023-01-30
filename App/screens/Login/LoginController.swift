@@ -1,20 +1,13 @@
 import Foundation
 import AuthenticationServices
-import KeychainAccess
 
 final class LoginController: ObservableObject {
-
-  @Published var currentAuthorization: CurrentAuthorization?
   
   @Published var currentLoginAttempt: LoginAttempt? = nil
 
-  init(currentAuthorization: CurrentAuthorization? = Keychain().currentAuthorization) {
-    self.currentAuthorization = currentAuthorization
-  }
-
-  func signOut() {
-    Keychain().currentAuthorization = nil
-    self.currentAuthorization = nil
+  let currentAuthController: CurrentAuthorizationController
+  init(currentAuthController: CurrentAuthorizationController) {
+    self.currentAuthController = currentAuthController
   }
 
   func onSignIn(request: ASAuthorizationAppleIDRequest) {
@@ -29,11 +22,10 @@ final class LoginController: ObservableObject {
     guard let currentLoginAttempt = currentLoginAttempt else {
       throw OnSignInErrors.receivedSignInCallbackWithoutCurrentLoginAttempt
     }
-    let user = try await self.handleAuthorization(result: result,
+    let authorization = try await self.handleAuthorization(result: result,
                                                   currentLoginAttempt: currentLoginAttempt)
     await MainActor.run {
-      self.currentAuthorization = user
-      Keychain().currentAuthorization = user
+      currentAuthController.login(authorization)
     }
   }
   

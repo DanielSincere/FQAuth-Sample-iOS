@@ -14,8 +14,15 @@ struct RandomStringView: View {
       Group {
         switch controller.latestEvent.state {
         case .notLoaded:
+          Spacer()
           Text("not loaded")
             .foregroundColor(.gray)
+          Spacer()
+          HStack {
+            RefreshButton(controller: controller)
+            RegenerateButton(controller: controller)
+          }
+
         case .loading:
           Text("loading").foregroundColor(.gray)
           ProgressView()
