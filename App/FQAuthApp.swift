@@ -7,7 +7,7 @@ struct FQAuthApp: App {
   @ObservedObject
   var currentAuthController: CurrentAuthorizationController
 
-  var networkingHelper: NetworkingHelper
+  var networking: FQNetworking
 
   @State
   var currentRoute: NavigationPath = NavigationPath()
@@ -16,7 +16,7 @@ struct FQAuthApp: App {
     let keychain = Keychain()
     let currentAuthController = CurrentAuthorizationController(keychain: keychain)
     self.currentAuthController = currentAuthController
-    self.networkingHelper = NetworkingHelper(urlSession: URLSession.shared,
+    self.networking = FQNetworking(urlSession: URLSession.shared,
                                              currentAuthController: currentAuthController)
   }
 
@@ -37,7 +37,7 @@ struct FQAuthApp: App {
         }
       }
       .environmentObject(currentAuthController)
-      .environmentObject(networkingHelper)
+      .environmentObject(networking)
     }
   }
 }

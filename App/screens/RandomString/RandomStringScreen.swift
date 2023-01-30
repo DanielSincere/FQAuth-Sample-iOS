@@ -2,13 +2,13 @@ import Foundation
 import SwiftUI
 
 struct RandomStringScreen: View {
-  @EnvironmentObject var networkingHelper: NetworkingHelper
+  @EnvironmentObject var networking: FQNetworking
   @EnvironmentObject var currentAuthController: CurrentAuthorizationController
   @Binding var currentRoute: NavigationPath
 
   var body: some View {
 
-    RandomStringView(controller: RandomStringController(networkingHelper: networkingHelper),
+    RandomStringView(controller: RandomStringController(networking: networking),
                      currentRoute: $currentRoute)
   }
 }

@@ -3,25 +3,23 @@ import KeychainAccess
 
 final class RandomStringController: ObservableObject {
 
-  var networkingHelper: NetworkingHelper
+  let networking: FQNetworking
 
   @Published var latestEvent: Event
-  convenience init(state: Event.State, networkingHelper: NetworkingHelper) {
-    self.init(event: Event(state: state), networkingHelper: networkingHelper)
-    self.networkingHelper = networkingHelper
+  convenience init(state: Event.State, networking: FQNetworking) {
+    self.init(event: Event(state: state), networking: networking)
   }
 
-  init(event: Event = Event(state: .notLoaded), networkingHelper: NetworkingHelper) {
+  init(event: Event = Event(state: .notLoaded), networking: FQNetworking) {
     self.latestEvent = event
-    self.networkingHelper = networkingHelper
-
+    self.networking = networking
   }
 
   func refresh() async {
     do {
 
       let url = URL(string: "/api/sample", relativeTo: randomStringServerURL)!.absoluteURL
-      let (data, _) = try await networkingHelper
+      let (data, _) = try await networking
         .authorizedRequest(url: url)
 
       await MainActor.run {
@@ -40,7 +38,7 @@ final class RandomStringController: ObservableObject {
 
     do {
       let url = URL(string: "/api/sample/new", relativeTo: randomStringServerURL)!.absoluteURL
-      let (data, _) = try await networkingHelper
+      let (data, _) = try await networking
         .authorizedRequest(url: url, httpMethod: "POST")
 
       await MainActor.run {

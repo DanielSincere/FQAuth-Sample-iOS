@@ -58,7 +58,6 @@ struct RandomStringView: View {
         }
       }
     }
-
   }
 
   struct RefreshButton: View {
@@ -90,7 +89,7 @@ struct RandomStringView: View {
 #if DEBUG
 struct RandomStringView_Previews: PreviewProvider {
 
-  static var networkingHelper: NetworkingHelper = .init(
+  static var networking: FQNetworking = .init(
     urlSession: FakeURLSession(),
     currentAuthController: CurrentAuthorizationController())
 
@@ -98,19 +97,19 @@ struct RandomStringView_Previews: PreviewProvider {
     Group {
       NavigationStack {
 
-        RandomStringView(controller: RandomStringController(state: .notLoaded, networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .notLoaded, networking: networking), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .loading, networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .loading, networking: networking), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString), networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString), networking: networking), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .loaded("yes it loads"), networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .loaded("yes it loads"), networking: networking), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
     }
   }

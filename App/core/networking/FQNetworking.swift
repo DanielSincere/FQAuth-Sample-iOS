@@ -1,7 +1,7 @@
 import Foundation
 import KeychainAccess
 
-public final class NetworkingHelper: ObservableObject {
+public final class FQNetworking: ObservableObject {
 
   let urlSession: URLSessionInterface
   let currentAuthController: CurrentAuthorizationController

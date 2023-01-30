@@ -1,7 +1,7 @@
 import XCTest
 @testable import App
 
-final class NetworkingHelperTests: XCTestCase {
+final class FQNetworkingTests: XCTestCase {
 
   var urlSession: FakeURLSession!
   var keychain: FakeKeychain!
@@ -25,7 +25,7 @@ final class NetworkingHelperTests: XCTestCase {
 
     urlSession.addStub(status: 200, url: "https://example.com")
 
-    _ = try await NetworkingHelper(urlSession: urlSession,
+    _ = try await FQNetworking(urlSession: urlSession,
                                    currentAuthController: currentAuthController)
       .authorizedRequest(url: URL(string: "https://example.com")!)
 
@@ -39,7 +39,7 @@ final class NetworkingHelperTests: XCTestCase {
     urlSession.addRefreshTokenStub(with: "new-access-token")
     urlSession.addStub(status: 200, url: "https://example.com/api/endpoint")
 
-    _ = try await NetworkingHelper(urlSession: urlSession,
+    _ = try await FQNetworking(urlSession: urlSession,
                                    currentAuthController: currentAuthController)
       .authorizedRequest(url: URL(string: "https://example.com/api/endpoint")!)
 
