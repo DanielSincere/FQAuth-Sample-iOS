@@ -3,21 +3,25 @@ import KeychainAccess
 
 final class RandomStringController: ObservableObject {
 
+  var networkingHelper: NetworkingHelper
+
   @Published var latestEvent: Event
-  convenience init(state: Event.State) {
-    self.init(event: Event(state: state))
+  convenience init(state: Event.State, networkingHelper: NetworkingHelper) {
+    self.init(event: Event(state: state), networkingHelper: networkingHelper)
+    self.networkingHelper = networkingHelper
   }
 
-  init(event: Event = Event(state: .notLoaded)) {
+  init(event: Event = Event(state: .notLoaded), networkingHelper: NetworkingHelper) {
     self.latestEvent = event
+    self.networkingHelper = networkingHelper
+
   }
 
   func refresh() async {
     do {
 
       let url = URL(string: "/api/sample", relativeTo: randomStringServerURL)!.absoluteURL
-      let (data, _) = try await NetworkingHelper(keychain: Keychain(),
-                                                 urlSession: URLSession.shared)
+      let (data, _) = try await networkingHelper
         .authorizedRequest(url: url)
 
       await MainActor.run {
@@ -36,8 +40,7 @@ final class RandomStringController: ObservableObject {
 
     do {
       let url = URL(string: "/api/sample/new", relativeTo: randomStringServerURL)!.absoluteURL
-      let (data, _) = try await NetworkingHelper(keychain: Keychain(),
-                                                 urlSession: URLSession.shared)
+      let (data, _) = try await networkingHelper
         .authorizedRequest(url: url, httpMethod: "POST")
 
       await MainActor.run {
@@ -47,7 +50,6 @@ final class RandomStringController: ObservableObject {
           self.latestEvent = .init(state: .error(Errors.responseDataNotConvertibleToString))
         }
       }
-
     } catch {
       self.latestEvent = .init(state: .error(Errors.urlSession(error)))
     }

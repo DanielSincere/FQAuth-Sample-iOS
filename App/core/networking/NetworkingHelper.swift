@@ -1,16 +1,21 @@
 import Foundation
 import KeychainAccess
 
-public struct NetworkingHelper {
+public final class NetworkingHelper: ObservableObject {
 
-  let keychain: KeychainInterface
   let urlSession: URLSessionInterface
+  let currentAuthController: CurrentAuthorizationController
+
+  init(urlSession: URLSessionInterface, currentAuthController: CurrentAuthorizationController) {
+    self.urlSession = urlSession
+    self.currentAuthController = currentAuthController
+  }
 
   var refreshTokenURL: URL { URL(string: "api/token", relativeTo: authServerURL)! }
 
   public func authorizedRequest(url: URL, httpMethod: String = "GET") async throws -> (Data, URLResponse) {
 
-    guard let token = keychain.currentAuthorization?.accessToken else {
+    guard let token = currentAuthController.currentAuthorization?.accessToken else {
       throw Errors.notLoggedIn
     }
 
@@ -22,11 +27,9 @@ public struct NetworkingHelper {
       return response
     }
 
-
     let newAuthorization = try await refreshToken()
 
-    // notify login controller
-    // store in keychain
+    currentAuthController.login(newAuthorization)
 
     return try await makeRequest(url: url,
                                  httpMethod: httpMethod,

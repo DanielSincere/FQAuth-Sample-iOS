@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+@testable import App
 
 extension FakeURLSession {
   func assertReceivedArgs(at index: Int, url: String, token: String?, file: StaticString = #filePath, line: UInt = #line) throws {

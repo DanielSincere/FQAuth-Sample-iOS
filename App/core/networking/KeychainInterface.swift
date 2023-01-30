@@ -1,7 +1,7 @@
 import Foundation
 import KeychainAccess
 
-protocol KeychainInterface {
+protocol KeychainInterface: AnyObject {
   var currentAuthorization: CurrentAuthorization? { get set }
 }
 

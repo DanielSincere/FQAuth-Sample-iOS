@@ -5,10 +5,10 @@ import KeychainAccess
 ///
 final class CurrentAuthorizationController: ObservableObject {
 
-  @Published var currentAuthorization: CurrentAuthorization?
-  let keychain: Keychain
+  @Published internal private(set) var currentAuthorization: CurrentAuthorization?
+  let keychain: KeychainInterface
 
-  init(keychain: Keychain = Keychain()) {
+  init(keychain: KeychainInterface = Keychain()) {
     self.keychain = keychain
     self.currentAuthorization = keychain.currentAuthorization
   }

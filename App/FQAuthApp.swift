@@ -1,24 +1,35 @@
 import SwiftUI
+import KeychainAccess
 
 @main
 struct FQAuthApp: App {
 
-  @StateObject
-  var currentAuthController = CurrentAuthorizationController()
+  @ObservedObject
+  var currentAuthController: CurrentAuthorizationController
+
+  var networkingHelper: NetworkingHelper
 
   @State
   var currentRoute: NavigationPath = NavigationPath()
+
+  init() {
+    let keychain = Keychain()
+    let currentAuthController = CurrentAuthorizationController(keychain: keychain)
+    self.currentAuthController = currentAuthController
+    self.networkingHelper = NetworkingHelper(urlSession: URLSession.shared,
+                                             currentAuthController: currentAuthController)
+  }
 
   var body: some Scene {
     WindowGroup {
       LoggedIn { currentAuthorization in
         NavigationStack(path: $currentRoute) {
 
-          RandomStringView(currentRoute: $currentRoute)
+          RandomStringScreen(currentRoute: $currentRoute)
             .navigationDestination(for: AppRoute.self) { appRoute in
               switch appRoute {
               case .randomString:
-                RandomStringView(currentRoute: $currentRoute)
+                RandomStringScreen(currentRoute: $currentRoute)
               case .profile:
                 ProfileScreen()
               }
@@ -26,6 +37,7 @@ struct FQAuthApp: App {
         }
       }
       .environmentObject(currentAuthController)
+      .environmentObject(networkingHelper)
     }
   }
 }

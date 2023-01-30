@@ -1,4 +1,5 @@
 import XCTest
+@testable import App
 
 final class FakeURLSessionTests: XCTestCase {
 

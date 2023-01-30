@@ -3,7 +3,7 @@ import SwiftUI
 struct RandomStringView: View {
 
   @ObservedObject
-  var controller: RandomStringController = .init()
+  var controller: RandomStringController
 
   @Binding var currentRoute: NavigationPath
 
@@ -61,10 +61,6 @@ struct RandomStringView: View {
 
   }
 
-  struct ProfileButton {
-
-  }
-
   struct RefreshButton: View {
     @ObservedObject var controller: RandomStringController
     var body: some View {
@@ -91,25 +87,32 @@ struct RandomStringView: View {
 }
 
 
-
+#if DEBUG
 struct RandomStringView_Previews: PreviewProvider {
+
+  static var networkingHelper: NetworkingHelper = .init(
+    urlSession: FakeURLSession(),
+    currentAuthController: CurrentAuthorizationController())
+
   static var previews: some View {
     Group {
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .notLoaded), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+
+        RandomStringView(controller: RandomStringController(state: .notLoaded, networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .loading), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .loading, networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString)), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .error(RandomStringController.Errors.responseDataNotConvertibleToString), networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
 
       NavigationStack {
-        RandomStringView(controller: RandomStringController(state: .loaded("yes it loads")), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
+        RandomStringView(controller: RandomStringController(state: .loaded("yes it loads"), networkingHelper: networkingHelper), currentRoute: .constant(NavigationPath([AppRoute.randomString])))
       }
     }
   }
 }
+#endif

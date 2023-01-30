@@ -1,7 +1,6 @@
 import Foundation
-import XCTest
-@testable import App
 
+#if DEBUG
 final class FakeURLSession: URLSessionInterface {
 
   var stubs: [(Data, HTTPURLResponse)] = []
@@ -84,3 +83,4 @@ final class FakeURLSession: URLSessionInterface {
     }
   }
 }
+#endif

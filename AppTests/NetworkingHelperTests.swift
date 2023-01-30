@@ -5,9 +5,11 @@ final class NetworkingHelperTests: XCTestCase {
 
   var urlSession: FakeURLSession!
   var keychain: FakeKeychain!
+  var currentAuthController: CurrentAuthorizationController!
   override func setUpWithError() throws {
     urlSession = FakeURLSession()
     keychain = FakeKeychain()
+
     keychain.currentAuthorization = CurrentAuthorization(
       user: .init(id: .init(),
                   firstName: "First",
@@ -15,6 +17,7 @@ final class NetworkingHelperTests: XCTestCase {
       refreshToken: "existing-refresh-token",
       accessToken: "existing-access-token")
 
+    currentAuthController = CurrentAuthorizationController(keychain: keychain)
   }
   override func tearDownWithError() throws { }
 
@@ -22,7 +25,8 @@ final class NetworkingHelperTests: XCTestCase {
 
     urlSession.addStub(status: 200, url: "https://example.com")
 
-    _ = try await NetworkingHelper(keychain: keychain, urlSession: urlSession)
+    _ = try await NetworkingHelper(urlSession: urlSession,
+                                   currentAuthController: currentAuthController)
       .authorizedRequest(url: URL(string: "https://example.com")!)
 
     XCTAssertEqual(urlSession.receivedArgs.first?.url, URL(string: "https://example.com")!)
@@ -35,7 +39,8 @@ final class NetworkingHelperTests: XCTestCase {
     urlSession.addRefreshTokenStub(with: "new-access-token")
     urlSession.addStub(status: 200, url: "https://example.com/api/endpoint")
 
-    _ = try await NetworkingHelper(keychain: keychain, urlSession: urlSession)
+    _ = try await NetworkingHelper(urlSession: urlSession,
+                                   currentAuthController: currentAuthController)
       .authorizedRequest(url: URL(string: "https://example.com/api/endpoint")!)
 
     XCTAssertEqual(urlSession.stubs.count, 0)
@@ -48,6 +53,8 @@ final class NetworkingHelperTests: XCTestCase {
     try urlSession.assertReceivedArgs(at: 1,
                                       url: "\(authServerURL)/api/token",
                                       token: nil)
+
+    XCTAssertEqual(keychain.currentAuthorization?.accessToken, "new-access-token")
 
     try urlSession.assertReceivedArgs(at: 2,
                                       url: "https://example.com/api/endpoint",
