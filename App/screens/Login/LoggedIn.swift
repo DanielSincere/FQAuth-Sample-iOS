@@ -30,12 +30,12 @@ struct LoggedIn_Previews: PreviewProvider {
       LoggedIn() { auth in
         Text("If you see this it's an error")
       }
-      .environmentObject(CurrentAuthorizationController(currentAuthorization: nil))
+      .environmentObject(CurrentAuthorizationController(keychain: FakeKeychain()))
 
       LoggedIn() { auth in
         Text("Success! Logged in as \(auth.user.fullName)")
       }
-      .environmentObject(CurrentAuthorizationController(currentAuthorization: currentAuth))
+      .environmentObject(CurrentAuthorizationController(keychain: FakeKeychain(currentAuthorization: currentAuth)))
     }
   }
 }

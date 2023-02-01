@@ -57,6 +57,7 @@ targets:
     sources: [AppTests]
     dependencies:
       - target: App
+      - package: JWTKit
     info:
       path: AppTests/Info.plist
       properties:

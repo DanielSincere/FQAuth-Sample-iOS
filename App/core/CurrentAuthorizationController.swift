@@ -11,12 +11,6 @@ final class CurrentAuthorizationController: ObservableObject {
     self.currentAuthorization = keychain.currentAuthorization
   }
 
-  init(currentAuthorization: CurrentAuthorization?) {
-    let keychain = Keychain(currentAuthorization: currentAuthorization)
-    self.keychain = keychain
-    self.currentAuthorization = currentAuthorization
-  }
-
   func signOut() {
     self.keychain.currentAuthorization = nil
     self.currentAuthorization = nil
