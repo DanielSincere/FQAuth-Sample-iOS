@@ -6,18 +6,30 @@ import JWTKit
 final class JWTVerifierTests: XCTestCase {
 
   func testOnLoad_FetchesAndStoresJWKSfromTheServer() async throws {
+    let keychain = FakeKeychain()
     let urlSession = FakeURLSession()
     urlSession.addStub(status: 200, url: "/api/jwks/public", data: JWKSFixtures.sample1.data)
 
-    let verifier = JWTVerifier(urlSession: urlSession)
+    let verifier = JWTVerifier(urlSession: urlSession, keychain: keychain)
     try await verifier.fetchKeySet()
     XCTAssertNotNil(verifier.keySet)
+    let jwks: JWKS = try XCTUnwrap(keychain.jwks)
+    XCTAssertFalse(jwks.keys.isEmpty)
+  }
+
+  func testRejectsJWKSWhenEmpty() throws {
+
+  }
+
+  func testOnInitFetchJWKSFromKeychain() throws {
+    
   }
 
   func testVerifyFQAuthSessionTokenUsingStoredJWKs() throws {
     let urlSession = FakeURLSession()
     let verifier = JWTVerifier(keySet: JWKSFixtures.sample1.decoded,
-                               urlSession: urlSession)
+                               urlSession: urlSession,
+                               keychain: FakeKeychain())
 
     let token: FQAuthSessionToken = try verifier.verify(jwt: FQAuthSessionTokenFixtures.sample1.rawValue)
     XCTAssertEqual(token.iss.value, "com.fullqueuedeveloper.FQAuth")
@@ -26,7 +38,8 @@ final class JWTVerifierTests: XCTestCase {
   func testVerifyThrowsWhenMissingJWKS() throws {
 
     let verifier = JWTVerifier(keySet: nil,
-                               urlSession: FakeURLSession())
+                               urlSession: FakeURLSession(),
+                               keychain: FakeKeychain())
 
     XCTAssertThrowsError(try verifier.verify(jwt: "SessionTokenFixture.sample1")) { error in
 
@@ -48,8 +61,8 @@ final class JWTVerifierTests: XCTestCase {
     let (token, jwks) = try sample.freshlySign(newExpiration: newExpiration)
 
     let verifier = JWTVerifier(keySet: jwks,
-                               urlSession: FakeURLSession())
+                               urlSession: FakeURLSession(),
+                               keychain: FakeKeychain())
     XCTAssertNoThrow(try verifier.verify(jwt: token))
   }
 }
-

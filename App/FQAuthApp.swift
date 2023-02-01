@@ -44,6 +44,6 @@ struct FQAuthApp: App {
     self.networking = FQNetworking(urlSession: urlSession,
                                              currentAuthController: currentAuthController)
 
-    self.jwtVerifier = JWTVerifier(urlSession: urlSession)
+    self.jwtVerifier = JWTVerifier(urlSession: urlSession, keychain: keychain)
   }
 }
