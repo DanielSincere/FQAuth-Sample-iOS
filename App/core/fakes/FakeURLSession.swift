@@ -17,12 +17,12 @@ final class FakeURLSession: URLSessionInterface {
     return next
   }
 
-  func addStub(status: Int, url: String) {
+  func addStub(status: Int, url: String, data: Data = Data()) {
     let response = HTTPURLResponse(url: URL(string: url)!,
                                    statusCode: status,
                                    httpVersion: nil,
                                    headerFields: nil)!
-    self.stubs.append((Data(), response))
+    self.stubs.append((data, response))
   }
 
   func addRefreshTokenStub(with accessToken: String) {

@@ -13,6 +13,9 @@ packages:
   KeychainAccess:
     url: https://github.com/kishikawakatsumi/KeychainAccess
     from: 4.2.2
+  JWTKit:
+    url: https://github.com/vapor/jwt-kit.git
+    from: 4.0.0
 targets:
   App:
     type: application
@@ -21,6 +24,7 @@ targets:
     sources: [App]
     dependencies:
       - package: KeychainAccess
+      - package: JWTKit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${FQAUTH_BUNDLE_ID}

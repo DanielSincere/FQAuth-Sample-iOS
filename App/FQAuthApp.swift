@@ -9,6 +9,8 @@ struct FQAuthApp: App {
 
   var networking: FQNetworking
 
+  var jwtVerifier: JWTVerifier
+
   @State
   var currentRoute: NavigationPath = NavigationPath()
 
@@ -35,9 +37,13 @@ struct FQAuthApp: App {
 
   init() {
     let keychain = Keychain()
+    let urlSession = URLSession.shared
+
     let currentAuthController = CurrentAuthorizationController(keychain: keychain)
     self.currentAuthController = currentAuthController
-    self.networking = FQNetworking(urlSession: URLSession.shared,
+    self.networking = FQNetworking(urlSession: urlSession,
                                              currentAuthController: currentAuthController)
+
+    self.jwtVerifier = JWTVerifier(urlSession: urlSession)
   }
 }
