@@ -10,26 +10,55 @@ final class JWTVerifierTests: XCTestCase {
     let urlSession = FakeURLSession()
     urlSession.addStub(status: 200, url: "/api/jwks/public", data: JWKSFixtures.sample1.data)
 
-    let verifier = JWTVerifier(urlSession: urlSession, keychain: keychain)
+    let verifier = JWTVerifier(keychain: keychain, urlSession: urlSession)
     try await verifier.fetchKeySet()
     XCTAssertNotNil(verifier.keySet)
     let jwks: JWKS = try XCTUnwrap(keychain.jwks)
     XCTAssertFalse(jwks.keys.isEmpty)
   }
 
-  func testRejectsJWKSWhenEmpty() throws {
+  func testRejectsJWKSWhenEmptyWhenLoadingFromServer() async throws {
+    let keychain = FakeKeychain()
+    let urlSession = FakeURLSession()
+    urlSession.addStub(status: 200, url: "/api/jwks/public", data: JWKSFixtures.empty.data)
+    let verifier = JWTVerifier(keychain: keychain, urlSession: urlSession)
 
+    do {
+      try await verifier.fetchKeySet()
+      XCTFail("expected a throw")
+    } catch {
+      if let verifierError = error as? JWTVerifier.Errors {
+        XCTAssertEqual(verifierError, .emptyJWKS)
+      } else {
+        XCTFail("unexpected error \(error.localizedDescription)")
+      }
+    }
+
+    XCTAssertNil(verifier.keySet)
+  }
+
+  func testRejectsJWKSWhenEmptyWhenLoadingFromKeychain() throws {
+    let keychain = FakeKeychain(sample: .empty)
+    let verifier = JWTVerifier(keychain: keychain,
+                               urlSession: FakeURLSession())
+    XCTAssertNil(verifier.keySet)
   }
 
   func testOnInitFetchJWKSFromKeychain() throws {
-    
+    let keychain = FakeKeychain(sample: .sample1)
+    let verifier = JWTVerifier(keychain: keychain,
+                               urlSession: FakeURLSession())
+
+    let keySet = try XCTUnwrap(verifier.keySet)
+    let key = try XCTUnwrap(keySet.find(identifier: "auth-public-key")?.first)
+
+    XCTAssertEqual(key.x, "ATHID-n4Pc0E2BzaZZHsD1NOQp25z5hhnFK96A7WMvH8-WZI_AalrCxxtqUZrzScNLnnoi4Zi0p-CcEUikSowQEY")
   }
 
   func testVerifyFQAuthSessionTokenUsingStoredJWKs() throws {
-    let urlSession = FakeURLSession()
-    let verifier = JWTVerifier(keySet: JWKSFixtures.sample1.decoded,
-                               urlSession: urlSession,
-                               keychain: FakeKeychain())
+
+    let verifier = JWTVerifier(keychain: FakeKeychain(sample: .sample1),
+                               urlSession: FakeURLSession())
 
     let token: FQAuthSessionToken = try verifier.verify(jwt: FQAuthSessionTokenFixtures.sample1.rawValue)
     XCTAssertEqual(token.iss.value, "com.fullqueuedeveloper.FQAuth")
@@ -37,20 +66,15 @@ final class JWTVerifierTests: XCTestCase {
 
   func testVerifyThrowsWhenMissingJWKS() throws {
 
-    let verifier = JWTVerifier(keySet: nil,
-                               urlSession: FakeURLSession(),
-                               keychain: FakeKeychain())
+    let verifier = JWTVerifier(keychain: FakeKeychain(),
+                               urlSession: FakeURLSession())
 
     XCTAssertThrowsError(try verifier.verify(jwt: "SessionTokenFixture.sample1")) { error in
 
-      guard let e = error as? JWTVerifier.Errors else {
+      if let verifierError = error as? JWTVerifier.Errors {
+        XCTAssertEqual(verifierError, .missingJWKS)
+      } else {
         XCTFail("unexpected error \(error.localizedDescription)")
-        return
-      }
-
-      switch e {
-      case .missingJWKS:
-        break // success
       }
     }
   }
@@ -60,9 +84,8 @@ final class JWTVerifierTests: XCTestCase {
     let newExpiration = Date(timeIntervalSinceNow: 600)
     let (token, jwks) = try sample.freshlySign(newExpiration: newExpiration)
 
-    let verifier = JWTVerifier(keySet: jwks,
-                               urlSession: FakeURLSession(),
-                               keychain: FakeKeychain())
+    let verifier = JWTVerifier(keychain: FakeKeychain(jwks: jwks),
+                               urlSession: FakeURLSession())
     XCTAssertNoThrow(try verifier.verify(jwt: token))
   }
 }

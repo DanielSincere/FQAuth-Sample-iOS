@@ -4,12 +4,10 @@ import KeychainAccess
 extension Keychain {
 
   private static let currentAuthorizationKey = "com.fullqueuedeveloper.keychain.current-authorization"
-
   convenience init(currentAuthorization: CurrentAuthorization?) {
     self.init()
     self.currentAuthorization = currentAuthorization
   }
-
   var currentAuthorization: CurrentAuthorization? {
     get {
       guard let data = self[data: Self.currentAuthorizationKey] else {

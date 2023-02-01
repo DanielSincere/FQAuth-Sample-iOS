@@ -6,10 +6,13 @@ final class JWTVerifier {
   var keySet: JWKS?
   let keychain: KeychainInterface
   let urlSession: URLSessionInterface
-  init(keySet: JWKS? = nil, urlSession: URLSessionInterface, keychain: KeychainInterface) {
-    self.keySet = keySet
+  init(keychain: KeychainInterface, urlSession: URLSessionInterface) {
     self.urlSession = urlSession
     self.keychain = keychain
+
+    if !(keychain.jwks?.keys.isEmpty ?? true) {
+      self.keySet = keychain.jwks
+    }
   }
 
   func fetchKeySet() async throws {
@@ -17,6 +20,9 @@ final class JWTVerifier {
     let (data, _) = try await urlSession.data(for: request)
 
     let keySet = try JSONDecoder().decode(JWKS.self, from: data)
+    guard !keySet.keys.isEmpty else {
+      throw Errors.emptyJWKS
+    }
     self.keychain.jwks = keySet
     self.keySet = keySet
   }
@@ -33,7 +39,8 @@ final class JWTVerifier {
     return try signers.verify(jwt, as: FQAuthSessionToken.self)
   }
 
-  enum Errors: Error {
+  enum Errors: Error, Equatable {
     case missingJWKS
+    case emptyJWKS
   }
 }
