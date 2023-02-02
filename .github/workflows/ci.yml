@@ -18,9 +18,6 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
-
       - run: brew bundle
-      - run: swish project
-      - run: swish test
-
-
+      - run: swish generate
+      - run: swish runtests

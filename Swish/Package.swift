@@ -11,10 +11,10 @@ let package = Package(
   ],
   targets: [
     .executableTarget(
-      name: "project",
+      name: "generate",
       dependencies: ["Sh","DotEnv"]),
     .executableTarget(
-      name: "test",
+      name: "runtests",
       dependencies: ["Sh"]),
   ]
 )
