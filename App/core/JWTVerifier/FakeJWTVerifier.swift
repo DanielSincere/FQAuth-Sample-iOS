@@ -5,6 +5,7 @@ import JWTKit
 final class FakeJWTVerifier: JWTVerifierInterface {
 
   var stubs: [String: FQAuthSessionTokenFixtures] = [:]
+
   func addStub(_ token: String, _ fixture: FQAuthSessionTokenFixtures) {
     stubs[token] = fixture
   }
@@ -20,6 +21,13 @@ final class FakeJWTVerifier: JWTVerifierInterface {
 
 extension JWTVerifierInterface where Self == FakeJWTVerifier {
   static var fake: FakeJWTVerifier { FakeJWTVerifier() }
+}
+
+final class AlwaysFailingFakeJWTVerifier: JWTVerifierInterface {
+  func verify(jwt: String) throws -> FQAuthSessionToken {
+    struct NotVerified: Error {}
+    throw NotVerified()
+  }
 }
 
 #endif

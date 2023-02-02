@@ -25,4 +25,16 @@ final class CurrentAuthorizationController: ObservableObject {
     self.currentAuthorization = currentAuthorization
     self.keychain.currentAuthorization = currentAuthorization
   }
+
+  func reverify() {
+    guard let token = currentAuthorization?.accessToken else {
+      return
+    }
+
+    do {
+      _ = try jwtVerifier.verify(jwt: token)
+    } catch {
+      self.signOut()
+    }
+  }
 }

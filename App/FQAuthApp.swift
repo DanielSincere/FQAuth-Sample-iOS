@@ -33,9 +33,7 @@ struct FQAuthApp: App {
       .environmentObject(currentAuthController)
       .environmentObject(networking)
       .refreshJWKSPeriodically(with: jwtVerifier)
-      .revalidateCurrentAuthPeriodically(
-        currentAuthController: currentAuthController,
-        jwtVerifier: jwtVerifier)
+      .revalidateCurrentAuthPeriodically(currentAuthController: currentAuthController)
     }
   }
 

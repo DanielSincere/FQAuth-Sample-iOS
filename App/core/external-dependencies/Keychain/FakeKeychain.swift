@@ -3,10 +3,10 @@ import JWTKit
 
 #if DEBUG
 final class FakeKeychain: KeychainInterface {
-  var currentAuthorization: App.CurrentAuthorization?
+  var currentAuthorization: CurrentAuthorization?
   var jwks: JWKS?
 
-  init(currentAuthorization: App.CurrentAuthorization? = nil, jwks: JWKS? = nil) {
+  init(currentAuthorization: CurrentAuthorization? = nil, jwks: JWKS? = nil) {
     self.currentAuthorization = currentAuthorization
     self.jwks = jwks
   }
