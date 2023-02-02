@@ -18,6 +18,10 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
+      - name: Xcode Setup
+        uses: maxim-lobanov/setup-xcode@v1
+          with:
+            xcode-version: "14.1"
       - run: brew bundle
       - run: swish generate
       - run: swish runtests
