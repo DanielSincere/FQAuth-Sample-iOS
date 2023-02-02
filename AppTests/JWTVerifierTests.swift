@@ -1,7 +1,6 @@
 import XCTest
 @testable import App
 import Foundation
-import JWTKit
 
 final class JWTVerifierTests: XCTestCase {
 
@@ -13,7 +12,7 @@ final class JWTVerifierTests: XCTestCase {
     let verifier = JWTVerifier(keychain: keychain, urlSession: urlSession)
     try await verifier.fetchKeySet()
     XCTAssertNotNil(verifier.keySet)
-    let jwks: JWKS = try XCTUnwrap(keychain.jwks)
+    let jwks = try XCTUnwrap(keychain.jwks)
     XCTAssertFalse(jwks.keys.isEmpty)
   }
 
