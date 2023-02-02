@@ -9,12 +9,10 @@ iOS SDK to interact with [FQAuth](https://github.com/FullQueueDeveloper/FQAuth) 
 
 ## Local development setup
 
-Install [Mint](https://github.com/yonaskolb/Mint) and use [Swish](https://github.com/FullQueueDeveloper/Swish) as a task runner to generate the `.xcodeproj`.
+[Swish](https://github.com/FullQueueDeveloper/Swish) is a task runner to generate the `.xcodeproj` and other development tasks.
 
-1. `brew install mint`
-2. `mint bootstrap -l`
-3. `swish project`
-
+1. `brew bundle`
+2. `swish generate`
 
 The project is configured with the Bundle ID, Apple Development Team, and Server URL that you specify. These items can be specified in the shell environment, in a `.env` file, or using the `security` command line tool. The config first checks the environment, and then the `.env` file, and lastly, checks the `security` tool. Please see `.env.sample` for an example `.env` you can use. Instructions for using `security` are below.
 
