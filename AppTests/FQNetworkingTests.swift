@@ -6,9 +6,11 @@ final class FQNetworkingTests: XCTestCase {
   var urlSession: FakeURLSession!
   var keychain: FakeKeychain!
   var currentAuthController: CurrentAuthorizationController!
+  var jwtVerifier: FakeJWTVerifier!
   override func setUpWithError() throws {
     urlSession = FakeURLSession()
     keychain = FakeKeychain()
+    jwtVerifier = FakeJWTVerifier()
 
     keychain.currentAuthorization = CurrentAuthorization(
       user: .init(id: .init(),
@@ -17,7 +19,10 @@ final class FQNetworkingTests: XCTestCase {
       refreshToken: "existing-refresh-token",
       accessToken: "existing-access-token")
 
-    currentAuthController = CurrentAuthorizationController(keychain: keychain)
+    jwtVerifier.addStub("existing-access-token", .sample1)
+    jwtVerifier.addStub("new-access-token", .sample1)
+
+    currentAuthController = CurrentAuthorizationController(keychain: keychain, jwtVerifier: jwtVerifier)
   }
   override func tearDownWithError() throws { }
 

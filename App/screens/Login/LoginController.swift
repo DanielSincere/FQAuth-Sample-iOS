@@ -22,10 +22,13 @@ final class LoginController: ObservableObject {
     guard let currentLoginAttempt = currentLoginAttempt else {
       throw OnSignInErrors.receivedSignInCallbackWithoutCurrentLoginAttempt
     }
-    let authorization = try await self.handleAuthorization(result: result,
-                                                  currentLoginAttempt: currentLoginAttempt)
-    await MainActor.run {
-      currentAuthController.login(authorization)
+
+    let authorization = try await self.handleAuthorization(
+      result: result,
+      currentLoginAttempt: currentLoginAttempt)
+
+    try await MainActor.run {
+      try currentAuthController.login(authorization)
     }
   }
   

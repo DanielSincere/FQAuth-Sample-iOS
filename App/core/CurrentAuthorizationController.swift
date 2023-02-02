@@ -5,9 +5,11 @@ final class CurrentAuthorizationController: ObservableObject {
 
   @Published internal private(set) var currentAuthorization: CurrentAuthorization?
   let keychain: KeychainInterface
+  let jwtVerifier: JWTVerifierInterface
 
-  init(keychain: KeychainInterface = Keychain()) {
+  init(keychain: KeychainInterface = Keychain(), jwtVerifier: JWTVerifierInterface) {
     self.keychain = keychain
+    self.jwtVerifier = jwtVerifier
     self.currentAuthorization = keychain.currentAuthorization
   }
 
@@ -16,7 +18,10 @@ final class CurrentAuthorizationController: ObservableObject {
     self.currentAuthorization = nil
   }
 
-  func login(_ currentAuthorization: CurrentAuthorization) {
+  func login(_ currentAuthorization: CurrentAuthorization) throws {
+
+    _ = try jwtVerifier.verify(jwt: currentAuthorization.accessToken)
+
     self.currentAuthorization = currentAuthorization
     self.keychain.currentAuthorization = currentAuthorization
   }

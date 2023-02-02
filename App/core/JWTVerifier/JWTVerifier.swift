@@ -1,7 +1,11 @@
 import Foundation
 import JWTKit
 
-final class JWTVerifier {
+protocol JWTVerifierInterface {
+  func verify(jwt: String) throws -> FQAuthSessionToken
+}
+
+final class JWTVerifier: JWTVerifierInterface {
 
   var keySet: JWKS?
   let keychain: KeychainInterface
@@ -18,7 +22,6 @@ final class JWTVerifier {
   func refresh() async {
     do {
       try await self.fetchKeySet()
-
     } catch {
       do {
         try await self.fetchKeySet()

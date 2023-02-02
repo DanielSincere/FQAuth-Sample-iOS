@@ -91,7 +91,7 @@ struct RandomStringView_Previews: PreviewProvider {
 
   static var networking: FQNetworking = .init(
     urlSession: FakeURLSession(),
-    currentAuthController: CurrentAuthorizationController())
+    currentAuthController: CurrentAuthorizationController(jwtVerifier: FakeJWTVerifier()))
 
   static var previews: some View {
     Group {

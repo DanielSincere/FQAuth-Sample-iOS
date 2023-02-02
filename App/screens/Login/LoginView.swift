@@ -51,7 +51,7 @@ public struct LoginView: View {
 struct LoginView_Previews: PreviewProvider {
 
   static var emptyLoginController: LoginController {
-    LoginController(currentAuthController: CurrentAuthorizationController())
+    LoginController(currentAuthController: CurrentAuthorizationController(jwtVerifier: .fake))
   }
 
   static var previews: some View {

@@ -18,6 +18,6 @@ public struct SignOutButton: View {
 struct SignOutButton_Previews: PreviewProvider {
   static var previews: some View {
     SignOutButton()
-      .environmentObject(CurrentAuthorizationController())
+      .environmentObject(CurrentAuthorizationController( jwtVerifier: .fake))
   }
 }

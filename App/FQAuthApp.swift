@@ -33,18 +33,24 @@ struct FQAuthApp: App {
       .environmentObject(currentAuthController)
       .environmentObject(networking)
       .refreshJWKSPeriodically(with: jwtVerifier)
+      .revalidateCurrentAuthPeriodically(
+        currentAuthController: currentAuthController,
+        jwtVerifier: jwtVerifier)
     }
   }
 
   init() {
     let keychain = Keychain()
     let urlSession = URLSession.shared
+    let jwtVerifier = JWTVerifier(keychain: keychain, urlSession: urlSession)
 
-    let currentAuthController = CurrentAuthorizationController(keychain: keychain)
-    self.currentAuthController = currentAuthController
+    let currentAuthController = CurrentAuthorizationController(
+      keychain: keychain,
+      jwtVerifier: jwtVerifier)
+
     self.networking = FQNetworking(urlSession: urlSession,
-                                             currentAuthController: currentAuthController)
-
-    self.jwtVerifier = JWTVerifier(keychain: keychain, urlSession: urlSession)
+                                   currentAuthController: currentAuthController)
+    self.currentAuthController = currentAuthController
+    self.jwtVerifier = jwtVerifier
   }
 }

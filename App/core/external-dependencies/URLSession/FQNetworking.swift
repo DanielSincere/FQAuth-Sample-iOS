@@ -28,7 +28,7 @@ public final class FQNetworking: ObservableObject {
 
     let newAuthorization = try await refreshToken()
 
-    currentAuthController.login(newAuthorization)
+    try currentAuthController.login(newAuthorization)
 
     return try await makeRequest(url: url,
                                  httpMethod: httpMethod,
