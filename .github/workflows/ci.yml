@@ -21,6 +21,6 @@ jobs:
 
       - run: brew bundle
       - run: swish project
-      - run: xcrun xcodebuild test -scheme App
+      - run: swish test
 
 

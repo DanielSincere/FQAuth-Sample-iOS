@@ -12,10 +12,9 @@ let package = Package(
   targets: [
     .executableTarget(
       name: "project",
-      dependencies: [
-        .product(name: "Sh", package: "Sh"),
-        "DotEnv"
-      ]
-    ),
+      dependencies: ["Sh","DotEnv"]),
+    .executableTarget(
+      name: "test",
+      dependencies: ["Sh"]),
   ]
 )
