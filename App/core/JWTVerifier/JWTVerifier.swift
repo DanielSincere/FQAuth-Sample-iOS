@@ -15,6 +15,19 @@ final class JWTVerifier {
     }
   }
 
+  func refresh() async {
+    do {
+      try await self.fetchKeySet()
+
+    } catch {
+      do {
+        try await self.fetchKeySet()
+      } catch {
+        print("could not load \(error)")
+      }
+    }
+  }
+
   func fetchKeySet() async throws {
     let request = URLRequest(url: URL(string: "/api/jwks/public", relativeTo: authServerURL)!)
     let (data, _) = try await urlSession.data(for: request)
