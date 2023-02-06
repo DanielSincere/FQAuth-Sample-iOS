@@ -21,12 +21,18 @@ final class FQNetworkingTests: XCTestCase {
 
     jwtVerifier.addStub("existing-access-token", .sample1)
     jwtVerifier.addStub("new-access-token", .sample1)
-
-    currentAuthController = CurrentAuthorizationController(keychain: keychain, jwtVerifier: jwtVerifier)
   }
-  override func tearDownWithError() throws { }
+
+  override func tearDownWithError() throws {
+    urlSession = nil
+    keychain = nil
+    currentAuthController = nil
+    jwtVerifier = nil
+  }
 
   func testAuthorizationIsSetFromKeychain() async throws {
+
+    currentAuthController = await CurrentAuthorizationController(keychain: keychain, jwtVerifier: jwtVerifier)
 
     urlSession.addStub(status: 200, url: "https://example.com")
 
@@ -39,6 +45,8 @@ final class FQNetworkingTests: XCTestCase {
   }
 
   func testForbiddenResponseTriggersTokenRefreshAndRetry() async throws  {
+
+    currentAuthController = await CurrentAuthorizationController(keychain: keychain, jwtVerifier: jwtVerifier)
 
     urlSession.addStub(status: 403, url: "https://example.com/api/endpoint")
     urlSession.addRefreshTokenStub(with: "new-access-token")

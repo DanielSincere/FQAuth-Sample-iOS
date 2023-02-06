@@ -14,7 +14,7 @@ public final class FQNetworking: ObservableObject {
 
   public func authorizedRequest(url: URL, httpMethod: String = "GET") async throws -> (Data, URLResponse) {
 
-    guard let token = currentAuthController.currentAuthorization?.accessToken else {
+    guard let token = await currentAuthController.currentAuthorization?.accessToken else {
       throw Errors.notLoggedIn
     }
 
@@ -28,7 +28,7 @@ public final class FQNetworking: ObservableObject {
 
     let newAuthorization = try await refreshToken()
 
-    try currentAuthController.login(newAuthorization)
+    try await currentAuthController.login(newAuthorization)
 
     return try await makeRequest(url: url,
                                  httpMethod: httpMethod,

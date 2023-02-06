@@ -5,10 +5,12 @@ extension View {
 
     self
       .task {
-        currentAuthController.reverify()
+        await currentAuthController.reverify()
       }
       .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification), perform: { _ in
-        currentAuthController.reverify()
+        Task {
+          await currentAuthController.reverify()
+        }
       })
   }
 }

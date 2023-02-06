@@ -37,14 +37,14 @@ final class JWTVerifierTests: XCTestCase {
   }
 
   func testRejectsJWKSWhenEmptyWhenLoadingFromKeychain() throws {
-    let keychain = FakeKeychain(sample: .empty)
+    let keychain = FakeKeychain(jwksFixture: .empty)
     let verifier = JWTVerifier(keychain: keychain,
                                urlSession: FakeURLSession())
     XCTAssertNil(verifier.keySet)
   }
 
   func testOnInitFetchJWKSFromKeychain() throws {
-    let keychain = FakeKeychain(sample: .sample1)
+    let keychain = FakeKeychain(jwksFixture: .sample1)
     let verifier = JWTVerifier(keychain: keychain,
                                urlSession: FakeURLSession())
 
@@ -56,7 +56,7 @@ final class JWTVerifierTests: XCTestCase {
 
   func testVerifyFQAuthSessionTokenUsingStoredJWKs() throws {
 
-    let verifier = JWTVerifier(keychain: FakeKeychain(sample: .sample1),
+    let verifier = JWTVerifier(keychain: FakeKeychain(jwksFixture: .sample1),
                                urlSession: FakeURLSession())
 
     let token: FQAuthSessionToken = try verifier.verify(jwt: FQAuthSessionTokenFixtures.sample1.rawValue)

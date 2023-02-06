@@ -1,6 +1,7 @@
 import Foundation
 import KeychainAccess
 
+@MainActor
 final class CurrentAuthorizationController: ObservableObject {
 
   @Published internal private(set) var currentAuthorization: CurrentAuthorization?

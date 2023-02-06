@@ -11,8 +11,12 @@ final class FakeKeychain: KeychainInterface {
     self.jwks = jwks
   }
 
-  convenience init(sample: JWKSFixtures) {
-    self.init(jwks: sample.decoded)
+  convenience init(currentAuthorizationFixture: CurrentAuthorizationFixtures) {
+    self.init(currentAuthorization: currentAuthorizationFixture.decoded)
+  }
+
+  convenience init(jwksFixture: JWKSFixtures) {
+    self.init(jwks: jwksFixture.decoded)
   }
 }
 #endif
